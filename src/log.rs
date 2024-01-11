@@ -3,14 +3,21 @@ use core::fmt;
 pub trait WriteLog: Sync {
     fn print(&self, log_content: core::fmt::Arguments);
 }
+#[derive(Debug,PartialEq, Eq)]
+pub enum Level {
+    INFO,
+    WARN,
+    ERR,
+}
 
 pub struct Log<'a> {
     pub writer: &'a dyn WriteLog,
+    pub level: Level
 }
 
 impl<'a> Log<'a> {
-    pub fn init(writer: &'a dyn WriteLog) -> Self {
-        Self { writer }
+    pub fn init(writer: &'a dyn WriteLog, level: Level) -> Self {
+        Self { writer,level }
     }
 
     #[track_caller]

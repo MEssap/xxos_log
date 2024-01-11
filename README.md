@@ -12,10 +12,10 @@ impl WriteLog for PT {
 
 fn main() {
     static WRITER: PT = PT;
-    init_log(&WRITER);
-    info!("I am info {}","Aa");
-    warn!("I am warning {}","Aa");
-    error!("I am  error {}","Aa");
+    init_log(&WRITER,Level::INFO);
+    info!("I am info {}", "Aa");
+    warn!("I am warning {}", "Aa");
+    error!("I am  error {}", "Aa");
 }
 ```
 它将会打印
@@ -24,5 +24,26 @@ logid   [INFO]: src/lib.rs:49 - I am info Aa
 logid   [WARN]: src/lib.rs:50 - I am warning Aa
 logid   [ERROR]: src/lib.rs:51 - I am  error Aa
 ```
-# TODO
+ - Example 2 
+```Rust
+impl WriteLog for PT {
+    fn print(&self, log_content: fmt::Arguments) {
+        println!("{}", log_content)
+    }
+}
+
+fn main() {
+    static WRITER: PT = PT;
+    init_log(&WRITER,Level::WARN);
+    info!("I am info {}", "Aa");
+    warn!("I am warning {}", "Aa");
+    error!("I am  error {}", "Aa");
+}
+```
+它将会打印
+```shell
+logid   [WARN]:  src/lib.rs:60 - I am warning Aa
+logid   [ERROR]: src/lib.rs:61 - I am  error Aa
+```
+## TODO
 - [ ] 在log前打印唯一标识`logid`
