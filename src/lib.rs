@@ -55,7 +55,7 @@ mod tests {
     #[test]
     fn tests() {
         static WRITER: PT = PT;
-        init_log(&WRITER,Level::INFO);
+        init_log(&WRITER,Level::WARN);
         info!("I am info {}", "Aa");
         warn!("I am warning {}", "Aa");
         error!("I am  error {}", "Aa");
