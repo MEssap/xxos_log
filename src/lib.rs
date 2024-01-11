@@ -2,29 +2,40 @@
 mod log;
 pub use log::*;
 use xx_mutex_lock::OnceLock;
+
 pub static LOG: OnceLock<Log> = OnceLock::new();
 #[macro_export]
 macro_rules! info {
     ($fmt: literal $(, $($arg: tt)+)?) => {
-        $crate::LOG.get().expect("None Init for LOG").info(format_args!($fmt $(, $($arg)+)?));
+        if let Some(ref logger) = LOG.get() {
+            if logger.level == $crate::Level::INFO {
+                logger.info(format_args!($fmt $(, $($arg)+)?));
+            }
+        }
     }
 }
 
 #[macro_export]
 macro_rules! warn {
     ($fmt: literal $(, $($arg: tt)+)?) => {
-        $crate::LOG.get().expect("None Init for LOG").warnning(format_args!($fmt $(, $($arg)+)?));
+        if let Some(ref logger) = LOG.get() {
+            if logger.level != $crate::Level::ERR {
+                logger.warnning(format_args!($fmt $(, $($arg)+)?));
+            }
+        }
     }
 }
 
 #[macro_export]
 macro_rules! error {
     ($fmt: literal $(, $($arg: tt)+)?) => {
-        $crate::LOG.get().expect("None Init for LOG").error(format_args!($fmt $(, $($arg)+)?));
+        if let Some(ref logger) = LOG.get() {
+            logger.error(format_args!($fmt $(, $($arg)+)?));
+        }
     }
 }
-pub fn init_log(writer: &'static dyn WriteLog) {
-    LOG.get_or_init(|| Log::init(writer));
+pub fn init_log(writer: &'static dyn WriteLog,level: Level) {
+    LOG.get_or_init(|| Log::init(writer,level));
 }
 
 #[cfg(test)]
@@ -44,7 +55,7 @@ mod tests {
     #[test]
     fn tests() {
         static WRITER: PT = PT;
-        init_log(&WRITER);
+        init_log(&WRITER,Level::INFO);
         info!("I am info {}", "Aa");
         warn!("I am warning {}", "Aa");
         error!("I am  error {}", "Aa");
