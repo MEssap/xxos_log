@@ -24,3 +24,5 @@ logid   [INFO]: src/lib.rs:49 - I am info Aa
 logid   [WARN]: src/lib.rs:50 - I am warning Aa
 logid   [ERROR]: src/lib.rs:51 - I am  error Aa
 ```
+# TODO
+- [ ] 在log前打印唯一标识`logid`
