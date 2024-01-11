@@ -1,66 +1,37 @@
 #![no_std]
-
-use core::{fmt, panic::Location};
-
-pub trait WriteLog {
-    fn print(&self, log_content: fmt::Arguments);
+mod log;
+pub use log::*;
+use xx_mutex_lock::OnceLock;
+pub static LOG: OnceLock<Log> = OnceLock::new();
+#[macro_export]
+macro_rules! info {
+    ($fmt: literal $(, $($arg: tt)+)?) => {
+        $crate::LOG.get().expect("None Init for LOG").info(format_args!($fmt $(, $($arg)+)?));
+    }
 }
 
-pub struct Log<'a> {
-    writer: &'a dyn WriteLog,
+#[macro_export]
+macro_rules! warn {
+    ($fmt: literal $(, $($arg: tt)+)?) => {
+        $crate::LOG.get().expect("None Init for LOG").warnning(format_args!($fmt $(, $($arg)+)?));
+    }
 }
 
-impl<'a> Log<'a> {
-    fn init(writer: &'a dyn WriteLog) -> Self {
-        Self { writer }
+#[macro_export]
+macro_rules! error {
+    ($fmt: literal $(, $($arg: tt)+)?) => {
+        $crate::LOG.get().expect("None Init for LOG").error(format_args!($fmt $(, $($arg)+)?));
     }
-
-    #[track_caller]
-    fn info(&self, s: &str) {
-        let location = Location::caller();
-
-        let file_name = location.file();
-        let file_line = location.line();
-
-        let mut logid = "logid";
-
-        self.writer.print(format_args!(
-            "{}\t[\x1b[32mINFO\x1b[0m]\t{}:{}\t- {}",
-            logid, file_name, file_line, s
-        ));
-    }
-
-    #[track_caller]
-    fn warnning(&self, s: &str) {
-        let location = Location::caller();
-        let mut logid = "logid";
-        self.writer.print(format_args!(
-            "{}\t[\x1b[33mWARN\x1b[0m]\t{}:{}\t- {}",
-            logid,
-            location.file(),
-            location.line(),
-            s
-        ));
-    }
-
-    #[track_caller]
-    fn error(&self, s: &str) {
-        let location = Location::caller();
-        let mut logid = "logid";
-        self.writer.print(format_args!(
-            "{}\t[\x1b[31mERROR\x1b[0m]\t{}:{}\t- {}",
-            logid,
-            location.file(),
-            location.line(),
-            s
-        ));
-    }
+}
+pub fn init_log(writer: &'static dyn WriteLog) {
+    LOG.get_or_init(|| Log::init(writer));
 }
 
 #[cfg(test)]
 mod tests {
     use crate::*;
     extern crate std;
+    use core::fmt;
     use std::println;
     struct PT;
 
@@ -72,10 +43,10 @@ mod tests {
 
     #[test]
     fn tests() {
-        let writer = PT;
-        let log = Log::init(&writer);
-        log.info("I am info !");
-        log.warnning("I am warnning !");
-        log.error("I am error !");
+        static WRITER: PT = PT;
+        init_log(&WRITER);
+        info!("I am info {}", "Aa");
+        warn!("I am warning {}", "Aa");
+        error!("I am  error {}", "Aa");
     }
 }
