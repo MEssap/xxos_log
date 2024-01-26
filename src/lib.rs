@@ -7,7 +7,7 @@ pub static LOG: OnceLock<Log> = OnceLock::new();
 #[macro_export]
 macro_rules! info {
     ($fmt: literal $(, $($arg: tt)+)?) => {
-        if let Some(ref logger) = LOG.get() {
+        if let Some(ref logger) = $crate::LOG.get() {
             if logger.level == $crate::Level::INFO {
                 logger.info(format_args!($fmt $(, $($arg)+)?));
             }
@@ -18,7 +18,7 @@ macro_rules! info {
 #[macro_export]
 macro_rules! warn {
     ($fmt: literal $(, $($arg: tt)+)?) => {
-        if let Some(ref logger) = LOG.get() {
+        if let Some(ref logger) = $crate::LOG.get() {
             if logger.level != $crate::Level::ERR {
                 logger.warnning(format_args!($fmt $(, $($arg)+)?));
             }
@@ -29,7 +29,7 @@ macro_rules! warn {
 #[macro_export]
 macro_rules! error {
     ($fmt: literal $(, $($arg: tt)+)?) => {
-        if let Some(ref logger) = LOG.get() {
+        if let Some(ref logger) = $crate::LOG.get() {
             logger.error(format_args!($fmt $(, $($arg)+)?));
         }
     }
