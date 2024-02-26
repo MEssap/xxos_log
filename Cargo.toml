@@ -7,3 +7,5 @@ edition = "2021"
 
 [dependencies]
 xx_mutex_lock = { git = "https://github.com/ZyLqb/xx_mutex_lock.git", branch = "master" }
+[features]
+no_log_inlog =[]

@@ -3,6 +3,7 @@ use core::fmt;
 pub trait WriteLog: Sync {
     fn print(&self, log_content: core::fmt::Arguments);
 }
+
 #[derive(Debug, PartialEq, Eq)]
 pub enum Level {
     INFO,
