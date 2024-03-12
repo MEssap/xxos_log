@@ -18,6 +18,18 @@ fn main() {
     error!("I am  error {}", "Aa");
 }
 ```
+也可以使用我们提供的过程宏
+```rust
+use xxos_log::{info, init_log,Logger,WriteLog};
+#[derive(Logger)]
+struct PT;
+fn main() {
+    init_log(&PT, xxos_log::Level::INFO);
+    info!("hello");
+    warn!("I am warning {}", "Aa");
+    error!("I am  error {}", "Aa");
+}
+```
 它将会打印
 ```shell
 logid   [INFO]: src/lib.rs:49 - I am info Aa
