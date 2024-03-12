@@ -1,6 +1,6 @@
 #![no_std]
-mod log;
-pub use log::*;
+pub use write_log::*;
+pub use proc_macro_lib::Logger;
 use xx_mutex_lock::OnceLock;
 
 pub static LOG: OnceLock<Log> = OnceLock::new();
@@ -42,16 +42,10 @@ pub fn init_log(writer: &'static dyn WriteLog,level: Level) {
 mod tests {
     use crate::*;
     extern crate std;
-    use core::fmt;
     use std::println;
+    use proc_macro_lib::Logger;
+    #[derive(Logger)]
     struct PT;
-
-    impl WriteLog for PT {
-        fn print(&self, log_content: fmt::Arguments) {
-            println!("{}", log_content)
-        }
-    }
-
     #[test]
     fn tests() {
         static WRITER: PT = PT;

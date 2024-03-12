@@ -1,3 +1,4 @@
+#![no_std]
 use core::fmt;
 
 pub trait WriteLog: Sync {
@@ -61,3 +62,4 @@ impl<'a> Log<'a> {
         ));
     }
 }
+
