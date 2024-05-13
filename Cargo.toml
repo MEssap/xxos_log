@@ -5,8 +5,9 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [workspace]
-members = [".","proc_macro_lib", "write_log"]
+members = [".", "proc_macro_lib", "write_log"]
 [dependencies]
-xx_mutex_lock = { git = "https://github.com/ZyLqb/xx_mutex_lock.git", branch = "master" }
-write_log ={ path = "./write_log"}
-proc_macro_lib ={ path = "./proc_macro_lib"}
+# xx_mutex_lock = { git = "https://github.com/ZyLqb/xx_mutex_lock.git", branch = "master" }
+write_log = { path = "./write_log" }
+proc_macro_lib = { path = "./proc_macro_lib" }
+spin = "0.9.8"

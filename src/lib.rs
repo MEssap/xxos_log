@@ -1,9 +1,9 @@
 #![no_std]
-pub use write_log::*;
 pub use proc_macro_lib::Logger;
-use xx_mutex_lock::OnceLock;
+use spin::Once;
+pub use write_log::*;
 
-pub static LOG: OnceLock<Log> = OnceLock::new();
+pub static LOG: Once<Log> = Once::new();
 #[macro_export]
 macro_rules! info {
     ($fmt: literal $(, $($arg: tt)+)?) => {
@@ -34,22 +34,22 @@ macro_rules! error {
         }
     }
 }
-pub fn init_log(writer: &'static dyn WriteLog,level: Level) {
-    LOG.get_or_init(|| Log::init(writer,level));
+pub fn init_log(writer: &'static dyn WriteLog, level: Level) {
+    LOG.call_once(|| Log::init(writer, level));
 }
 
 #[cfg(test)]
 mod tests {
     use crate::*;
     extern crate std;
-    use std::println;
     use proc_macro_lib::Logger;
+    use std::println;
     #[derive(Logger)]
     struct PT;
     #[test]
     fn tests() {
         static WRITER: PT = PT;
-        init_log(&WRITER,Level::WARN);
+        init_log(&WRITER, Level::WARN);
         info!("I am info {}", "Aa");
         warn!("I am warning {}", "Aa");
         error!("I am  error {}", "Aa");
